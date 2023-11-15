@@ -85,3 +85,61 @@ TEST(PasswordTest, mixed_case_long_string)
 	bool actual = my_password.has_mixed_case("12321442141ds13221211212\n\n    \t \t \t //////DDbze");
 	ASSERT_EQ(1, actual);
 }
+
+TEST(PasswordTest, default_constructor_valid)
+{
+	Password my_password;
+	bool actual = my_password.authenticate("ChicoCA-95929");
+	ASSERT_EQ(1, actual);
+}
+
+TEST(PasswordTest, default_constructor_valid_against_bad_password)
+{
+	Password my_password;
+	bool actual = my_password.authenticate("blahblah");
+	ASSERT_EQ(0, actual);
+}
+
+TEST(PasswordTest, valid_set)
+{
+	Password my_password;
+	my_password.set("abcD1234");
+	bool actual = my_password.authenticate("abcD1234");
+	ASSERT_EQ(1, actual);
+}
+
+TEST(PasswordTest, valid_many_sets)
+{
+	Password my_password;
+	my_password.set("abcD1234");
+	my_password.set("abcDE1234");
+	my_password.set("abcDF1234");
+	bool actual = my_password.authenticate("abcDF1234");
+	ASSERT_EQ(1, actual);
+}
+
+TEST(PasswordTest, invalid_mix_case_set)
+{
+	Password my_password;
+	my_password.set("abce1234");
+	bool actual = my_password.authenticate("abce1234");
+	ASSERT_EQ(0, actual);
+}
+
+TEST(PasswordTest, invalid_length_set)
+{
+	Password my_password;
+	my_password.set("abc");
+	bool actual = my_password.authenticate("abc");
+	ASSERT_EQ(0, actual);
+}
+
+TEST(PasswordTest, invalid_prev_password_set)
+{
+	Password my_password;
+	my_password.set("abcD1234");
+	my_password.set("abcDE1234");
+	my_password.set("abcD1234");
+	bool actual = my_password.authenticate("abcD1234");
+	ASSERT_EQ(0, actual);
+}
